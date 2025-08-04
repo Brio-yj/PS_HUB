@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Main {
     static int N;
-    static int max;
+    static int res, max;
     static char cArr[];
 
     public static void main(String[] args) throws IOException {
@@ -14,67 +14,74 @@ public class Main {
         for (int i = 0; i < N; i++) {
             cArr[i] = s.charAt(i);
         }
-        int res = cArr[0] - '0';
+        res = cArr[0] - '0';
         max = Integer.MIN_VALUE;
         if(N==1){
-            System.out.println(res);
+            System.out.println(s.charAt(0)-'0');
             return;
         }
         if(N==3){
             System.out.println(cal(0,1,2));;
             return;
         }
-        solve(1,res);
+        solve(1);
         System.out.println(max);
     }
 
-    static void solve(int idx,int res) {   //괄호 안친다 =0, 친다=1
+    static void solve(int idx) {   //괄호 안친다 =0, 친다=1
         if (idx == N) {
             max = Math.max(max, res);
             return;
         }
         if (idx % 2 == 1) {
+            //안치기
             if (cArr[idx] == '+') {
-                int temp = res;
                 if(idx+2 <= N) {
                     res += (cArr[idx + 1] - '0');
-                    solve(idx + 2,res);
-                    res=temp;
+                    solve(idx + 2);
+                    res -= (cArr[idx + 1] - '0');
                 }
                 if (idx + 4 <= N) {
                     res += cal(idx + 1, idx + 2, idx + 3);
-                    solve(idx + 4,res);
-                    res =temp;
+                    solve(idx + 4);
+                    res -= cal(idx + 1, idx + 2, idx + 3);
                 }
             }
             if (cArr[idx] == '-') {
-                int temp = res;
                 if(idx+2<=N) {
                     res -= (cArr[idx + 1] - '0');
-                    solve(idx + 2,res);
-                    res = temp;
+                    solve(idx + 2);
+                    res += (cArr[idx + 1] - '0');
                 }
                 if (idx + 4 <= N) {
                     res -= cal(idx + 1, idx + 2, idx + 3);
-                    solve(idx + 4,res);
-                    res = temp;
+                    solve(idx + 4);
+                    res += cal(idx + 1, idx + 2, idx + 3);
                 }
             }
             if (cArr[idx] == '*') {
-                int temp = res;
                 if(idx+2<=N) {
+                    int temp = res;
                     res *= (cArr[idx + 1] - '0');
-                    solve(idx + 2,res);
-                    res=temp;
+                    solve(idx + 2);
+                    if((cArr[idx + 1] - '0')==0){
+                        res=temp;
+                    }else {
+                        res /= (cArr[idx + 1] - '0');
+                    }
                 }
                 if (idx + 4 <= N) {
+                    int temp = res;
                     res *= cal(idx + 1, idx + 2, idx + 3);
-                    solve(idx + 4,res);
-                    res=temp;
+                    solve(idx + 4);
+                    if((cArr[idx + 1] - '0')==0 || cal(idx + 1, idx + 2, idx + 3)==0 ){
+                        res=temp;
+                    }else {
+                        res /= cal(idx + 1, idx + 2, idx + 3);
+                    }
                 }
             }
         }
-        return ;
     }
 
     static int cal(int idx1, int idx2, int idx3) {
