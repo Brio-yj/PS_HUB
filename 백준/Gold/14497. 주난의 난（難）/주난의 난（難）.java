@@ -1,115 +1,90 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
-import java.util.*;
-import java.io.*;
+import static java.lang.Integer.parseInt;
 
 public class Main {
-    static class Point {
-        int r, c;
-
-        Point(int r, int c) {
-            this.r = r;
-            this.c = c;
-        }
-    }
-
-    static int[] dr = {-1, 1, 0, 0};
-    static int[] dc = {0, 0, -1, 1};
     static int N, M;
-    static int[][] visit;
-    static int[][] board;
+    static int[][] map;
+    static boolean[][] visited;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+        N = parseInt(st.nextToken());
+        M = parseInt(st.nextToken());
+        map = new int[N][M];
+        visited = new boolean[N][M];
+
         st = new StringTokenizer(br.readLine());
-        int r1 = Integer.parseInt(st.nextToken());
-        int c1 = Integer.parseInt(st.nextToken());
-        int r2 = Integer.parseInt(st.nextToken());
-        int c2 = Integer.parseInt(st.nextToken());
+        int sy = parseInt(st.nextToken()) - 1;
+        int sx = parseInt(st.nextToken()) - 1;
+        int ey = parseInt(st.nextToken()) - 1;
+        int ex = parseInt(st.nextToken()) - 1;
 
-        board = new int[N][M];
-        visit = new int[N][M];
+        String line;
+        char val;
+        for (int y = 0; y < N; y++) {
+            line = br.readLine();
+            for (int x = 0; x < M; x++) {
+                val = line.charAt(x);
+                if (val == '#' || val == '*')
+                    continue;
 
-        for (int i = 0; i < N; i++) {
-            Arrays.fill(visit[i], -1);
-        }
-        for (int i = 0; i < N; i++) {
-            String s = br.readLine();
-            for (int j = 0; j < M; j++) {
-                if (s.charAt(j)== '#' || s.charAt(j)== '*') board[i][j] = 0;
-                else board[i][j] = s.charAt(j)-'0';
+                map[y][x] = val - '0';
             }
         }
-        bfs(r1-1, c1-1);
-        System.out.println(visit[r2-1][c2-1]+1);
+
+        map[ey][ex] = 1;
+        System.out.println(bfs(sx, sy, ex, ey));
+        br.close();
     }
 
-    static void bfs(int r, int c) {
-        visit[r][c] = 0;
-        Queue<Point> q = new LinkedList();
-        q.add(new Point(r, c));
-        while (!q.isEmpty()) {
-            Point cur = q.poll();
-            for (int i = 0; i < 4; i++) {
-                int nr = cur.r + dr[i];
-                int nc = cur.c + dc[i];
-                if (nr >= 0 && nr < N && nc >= 0 && nc < M && visit[nr][nc] == -1) {
-                    if (board[nr][nc] == 1) {
-                        visit[nr][nc] = visit[cur.r][cur.c] + 1;
+    static int bfs(int sx, int sy, int ex, int ey) {
+        ArrayDeque<Node> queue = new ArrayDeque<>();
+        queue.offer(new Node(sx, sy, 0));
+        visited[sy][sx] = true;
 
-                        //System.out.println("cur.r/cur.c= "+cur.r+" "+cur.c);
-                        //System.out.println("nr/nc= "+nr+" "+nc);
-                        //System.out.println("visit[nr][nc]= "+visit[nr][nc]);
-                        q.add(new Point(nr, nc));
-                    }
-                    else {
-                        visit[nr][nc] = visit[cur.r][cur.c];
-                        //System.out.println("cur.r/cur.c= "+cur.r+" "+cur.c);
-                        //System.out.println("nr/nc= "+nr+" "+nc);
-                        //System.out.println("visit[nr][nc]= "+visit[nr][nc]);
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+        int nx, ny;
 
-                        List<Point> pList=go(nr,nc);
-                        for(Point p :pList){
-                            q.add(p);
-                        }
-                    }
+        while (!queue.isEmpty()) {
+            Node cur = queue.poll();
+            if (cur.x == ex && cur.y == ey) return cur.level;
+
+            for (int i = 0; i < dx.length; i++) {
+                nx = cur.x + dx[i];
+                ny = cur.y + dy[i];
+
+                if (nx < 0 || nx >= M || ny < 0 || ny >= N)
+                    continue;
+
+                if (visited[ny][nx]) continue;
+
+                visited[ny][nx] = true;
+                if (map[ny][nx] == 0) {
+                    queue.offerFirst(new Node(nx, ny, cur.level));
+                } else {
+                    queue.offerLast(new Node(nx, ny, cur.level + 1));
                 }
             }
         }
+
+        return -1;
     }
 
-    static List<Point> go(int r, int c) {
-        List<Point> pList = new ArrayList();
+    static class Node {
+        int x, y, level;
 
-        Queue<Point> q = new LinkedList();
-        q.add(new Point(r, c));
-        while (!q.isEmpty()) {
-            Point cur = q.poll();
-            for (int i = 0; i < 4; i++) {
-                int nr = cur.r + dr[i];
-                int nc = cur.c + dc[i];
-                if (nr >= 0 && nr < N && nc >= 0 && nc < M && visit[nr][nc] == -1) {
-                    if(board[nr][nc] == 0){
-                        visit[nr][nc]=visit[cur.r][cur.c];
-
-                        //System.out.println("cur.r/cur.c= "+cur.r+" "+cur.c);
-                        //System.out.println("nr/nc= "+nr+" "+nc);
-                        //System.out.println("visit[nr][nc]= "+visit[nr][nc]);
-                        q.add(new Point(nr,nc));
-                    }
-                    if(board[nr][nc] == 1){
-                        visit[nr][nc]=visit[cur.r][cur.c]+1;
-
-                        //System.out.println("cur.r/cur.c= "+cur.r+" "+cur.c);
-                        //System.out.println("nr/nc= "+nr+" "+nc);
-                        //System.out.println("visit[nr][nc]= "+visit[nr][nc]);
-                        pList.add(new Point(nr,nc));
-                    }
-                }
-            }
+        public Node(int x, int y, int level) {
+            this.x = x;
+            this.y = y;
+            this.level = level;
         }
-        return pList;
     }
 }
