@@ -1,0 +1,29 @@
+WITH A AS(
+SELECT O.NAME AS NAME, DATEDIFF(O.DATETIME,I.DATETIME) AS DDATE, I.ANIMAL_ID AS ID
+FROM ANIMAL_INS AS I
+JOIN ANIMAL_OUTS AS O
+ON I.ANIMAL_ID = O.ANIMAL_ID
+ORDER BY DDATE DESC
+)
+SELECT ID AS ANIMAL_ID,NAME
+FROM A LIMIT 2
+
+
+
+
+
+/*
+out-name & in-name
+out-datetime-in-datetime
+큰순으로 정렬
+상위 2개
+뽑기
+
+
+
+
+
+
+
+
+*/
