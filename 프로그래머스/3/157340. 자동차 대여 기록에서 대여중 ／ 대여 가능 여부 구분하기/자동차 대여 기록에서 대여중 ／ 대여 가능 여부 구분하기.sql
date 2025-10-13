@@ -1,28 +1,29 @@
-select
-    CAR_ID,
-    case 
-    when CAR_ID NOT IN(
-        SELECT car_id	
-        FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY AS C
-        WHERE C.start_date <= "2022-10-16" and C.end_date >= "2022-10-16"
-        ) 
-    then "대여 가능"
-    else "대여중"
-    end as AVAILABILITY
-from CAR_RENTAL_COMPANY_RENTAL_HISTORY 
+/*
+SELECT DISTINCT CAR_ID 
+FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY AS C 
+WHERE C.CAR_ID NOT IN 
+(
+    SELECT CAR_ID
+    FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY 
+    WHERE START_DATE <= "2022-10-16" && "2022-10-16"<=END_DATE
+)
+*/
+SELECT CAR_ID,
+CASE
+WHEN CAR_ID IN
+(SELECT CAR_ID
+    FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY 
+    WHERE START_DATE <= "2022-10-16" && "2022-10-16"<=END_DATE
+)THEN '대여중'
+ELSE '대여 가능'
+END AS AVAILABILITY
+FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY 
 GROUP BY CAR_ID
-order by CAR_ID DESC
+ORDER BY CAR_ID DESC 
 
+    
 
 
 /*
-a->대여중
-//대여중, 나머진 그냥 대여 가능, 어차피 NOT IN 하면 걸러진다
-
-
-with a as(
-SELECT car_id	
-FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY AS C
-WHERE C.start_date <= "2022-10-16" and C.end_date >= "2022-10-16"
-)
+    2022/10/16 -> 대여중인지 아닌지, 이날에 반납해도 대여중임
 */
