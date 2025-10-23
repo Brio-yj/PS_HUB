@@ -8,12 +8,12 @@ public class Main {
         StringTokenizer st = new StringTokenizer(br.readLine());
         List<Integer> answerList = new ArrayList();
         List<Integer> list = new ArrayList();
-        
+
         for(int i=0;i<n;i++){
             int num = Integer.parseInt(st.nextToken());
             list.add(num);
         }
-        
+
         Set<Integer> set = new HashSet(list);
         List<Integer> temp = new ArrayList(set);
         temp.sort((a,b)->{return a-b;});
@@ -25,13 +25,7 @@ public class Main {
         System.out.println(sb.toString().trim());
     }
     static int solve(int num,List<Integer> temp){
-        int l=0; int r=temp.size();
-        while(l<r){
-            int mid = l+(r-l)/2;
-            if(num>temp.get(mid)) l = mid+1;
-            else r = mid;
-        }
-        return l;
+        return Collections.binarySearch(temp,num);
     }
 }
 
