@@ -1,7 +1,7 @@
-
 import java.io.*;
 import java.util.*;
 public class Main {
+    /*
     static class Tuple{
         int idx,value;
         Tuple(int idx,int value){
@@ -9,6 +9,7 @@ public class Main {
             this.value=value;
         }
     }
+     */
     static Map<List<Integer>,Integer> map = new HashMap();
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -22,6 +23,19 @@ public class Main {
         for(int i=0;i<r;i++){
             st = new StringTokenizer(br.readLine());
 
+            List<Integer> temp = new ArrayList();
+            for(int j=0;j<c;j++){
+                int num = Integer.parseInt(st.nextToken());
+                temp.add(num);
+            }
+            Set<Integer> set = new HashSet(temp);
+            List<Integer> sorted = new ArrayList(set);
+            sorted.sort((a,b)->{return a-b;});
+
+            List<Integer> answerList = new ArrayList(temp);
+            for(int j=0;j<c;j++){answerList.set(j,Collections.binarySearch(sorted,temp.get(j)));}
+            
+            /*
             List<Tuple> tupleList = new ArrayList();
             for(int j=0;j<c;j++){
                 int num = Integer.parseInt(st.nextToken());
@@ -37,8 +51,9 @@ public class Main {
                 if(tupleList.get(j).value!=tupleList.get(j-1).value) rank++;
                 temp.set(tupleList.get(j).idx,rank);
             }
+            */
 
-            map.merge(temp,1,(prev,now)->prev+now);
+            map.merge(answerList,1,(prev,now)->prev+now);
         }
         int cnt=0;
         for(int val : map.values()){
