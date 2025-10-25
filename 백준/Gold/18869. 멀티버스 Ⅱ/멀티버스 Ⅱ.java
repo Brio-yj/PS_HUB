@@ -3,11 +3,10 @@ import java.io.*;
 import java.util.*;
 public class Main {
     static class Tuple{
-        int idx,value,rank;
+        int idx,value;
         Tuple(int idx,int value){
             this.idx=idx;
             this.value=value;
-            this.rank=0;
         }
     }
     static Map<List<Integer>,Integer> map = new HashMap();
@@ -22,25 +21,22 @@ public class Main {
 
         for(int i=0;i<r;i++){
             st = new StringTokenizer(br.readLine());
-            List<Integer> beforeList = new ArrayList();
+
             List<Tuple> tupleList = new ArrayList();
             for(int j=0;j<c;j++){
                 int num = Integer.parseInt(st.nextToken());
-                beforeList.add(num);
                 tupleList.add(new Tuple(j,num));
             }
             tupleList.sort((a,b)->{return a.value-b.value;});
 
-            int Rank=0;
-            tupleList.get(0).rank=Rank;
-            for(int j=1;j<c;j++){
-                if(tupleList.get(j).value!=tupleList.get(j-1).value) Rank++;
-                tupleList.get(j).rank=Rank;
-            }
+            List<Integer> temp = new ArrayList(Collections.nCopies(c,0));
 
-            tupleList.sort((a,b)->{return a.idx-b.idx;});
-            List<Integer> temp = new ArrayList();
-            for(int j=0;j<c;j++) temp.add(tupleList.get(j).rank);
+            int rank=0;
+            temp.set(tupleList.get(0).idx,rank);
+            for(int j=1;j<c;j++){
+                if(tupleList.get(j).value!=tupleList.get(j-1).value) rank++;
+                temp.set(tupleList.get(j).idx,rank);
+            }
 
             map.merge(temp,1,(prev,now)->prev+now);
         }
