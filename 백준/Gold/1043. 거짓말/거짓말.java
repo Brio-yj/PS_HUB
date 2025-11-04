@@ -6,7 +6,8 @@ public class Main {
 
     static boolean[] answer;
     static Queue<Integer> q = new LinkedList();
-    static List<List<Integer>> list = new ArrayList();
+    static List<List<Integer>> list = new ArrayList();  //리스트
+    static List<List<Integer>> party = new ArrayList(); //사람이 속해있는 파티 번호들
 
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -16,6 +17,7 @@ public class Main {
         int  m = Integer.parseInt(st.nextToken());
 
         answer= new boolean[m];
+        for(int i=0;i<=n;i++)party.add(new ArrayList());
 
         st = new StringTokenizer(br.readLine());
         int  t = Integer.parseInt(st.nextToken());
@@ -28,7 +30,7 @@ public class Main {
             }
         }
 
-        //2차원 리스트 만들기
+        //입력 처리
         for(int i=0;i<m;i++){
             st = new StringTokenizer(br.readLine());
             int tempSize = Integer.parseInt(st.nextToken());
@@ -36,6 +38,8 @@ public class Main {
             List<Integer> tempList = new ArrayList();
             for(int j=0;j<tempSize;j++){
                 int tempNum = Integer.parseInt(st.nextToken());
+
+                party.get(tempNum).add(i);
                 tempList.add(tempNum);
             }
             tempList.sort(null);
@@ -56,15 +60,11 @@ public class Main {
         System.out.println(cnt);
     }
     static void BS(int num){
-        for(int i=0;i<list.size();i++){
-            if(!answer[i]){
-                int idx = Collections.binarySearch(list.get(i),num);
-                if(idx>=0){
-                    for(int j=0;j<list.get(i).size();j++){
-                        if(list.get(i).get(j)==num) continue;
-                        else q.add(list.get(i).get(j));
-                    }
-                    answer[i]=true;
+        for(int row : party.get(num)){
+            if(!answer[row]) {
+                answer[row] = true;
+                for (int temp : list.get(row)) {
+                    if (temp != num) q.add(temp);
                 }
             }
         }
