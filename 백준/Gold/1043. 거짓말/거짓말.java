@@ -1,11 +1,10 @@
 
-
 import java.io.*;
 import java.util.*;
 public class Main {
 
     static boolean[] answer;
-    static Queue<Integer> q = new LinkedList();
+    static Deque<Integer> q = new ArrayDeque();
     static List<List<Integer>> list = new ArrayList();  //리스트
     static List<List<Integer>> party = new ArrayList(); //사람이 속해있는 파티 번호들
 
