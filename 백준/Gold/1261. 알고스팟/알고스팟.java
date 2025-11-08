@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.util.*;
 public class Main {
@@ -36,7 +37,6 @@ public class Main {
         int cur=1;
         for(int i=0;i<N;i++){
             for(int j=0;j<M;j++){
-                int wei = board[i][j];
                 int to=0;
                 for(int d=0;d<4;d++){
                     int nr = i + dr[d];
@@ -49,7 +49,7 @@ public class Main {
                     if(d==2) to= cur -1;
                     if(d==3) to= cur +1;
 
-                    adj[cur].add(new Node(to,wei));
+                    adj[cur].add(new Node(to,board[nr][nc]));
                 }
                 cur++;
             }
