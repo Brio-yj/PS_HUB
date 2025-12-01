@@ -1,63 +1,47 @@
+
 import java.io.*;
 import java.util.*;
+
 public class Main {
-    /*
-    static class Tuple{
-        int idx,value;
-        Tuple(int idx,int value){
-            this.idx=idx;
-            this.value=value;
-        }
-    }
-     */
-    static Map<List<Integer>,Integer> map = new HashMap();
-    public static void main(String[] args) throws IOException{
+    static int[][] arr;
+
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int r = Integer.parseInt(st.nextToken());
-        int c = Integer.parseInt(st.nextToken());
 
-        List<List<Integer>> list = new ArrayList();
-        for(int i=0;i<r;i++)list.add(new ArrayList());
+        int M = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(st.nextToken());
+        arr = new int[M][N];
 
-        for(int i=0;i<r;i++){
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
+            List<Integer> temp1 = new ArrayList();
+            Set<Integer> set = new HashSet();
 
-            List<Integer> temp = new ArrayList();
-            for(int j=0;j<c;j++){
+            for (int j = 0; j < N; j++) {
                 int num = Integer.parseInt(st.nextToken());
-                temp.add(num);
+                temp1.add(num);
+                set.add(num);
             }
-            Set<Integer> set = new HashSet(temp);
-            List<Integer> sorted = new ArrayList(set);
-            sorted.sort((a,b)->{return a-b;});
-
-            List<Integer> answerList = new ArrayList(temp);
-            for(int j=0;j<c;j++){answerList.set(j,Collections.binarySearch(sorted,temp.get(j)));}
-            
-            /*
-            List<Tuple> tupleList = new ArrayList();
-            for(int j=0;j<c;j++){
-                int num = Integer.parseInt(st.nextToken());
-                tupleList.add(new Tuple(j,num));
+            List<Integer> temp2 = new ArrayList(set);
+            temp2.sort(null);
+            for(int j=0;j<N;j++) {
+                arr[i][j]=Collections.binarySearch(temp2,temp1.get(j));
             }
-            tupleList.sort((a,b)->{return a.value-b.value;});
-
-            List<Integer> temp = new ArrayList(Collections.nCopies(c,0));
-
-            int rank=0;
-            temp.set(tupleList.get(0).idx,rank);
-            for(int j=1;j<c;j++){
-                if(tupleList.get(j).value!=tupleList.get(j-1).value) rank++;
-                temp.set(tupleList.get(j).idx,rank);
-            }
-            */
-
-            map.merge(answerList,1,(prev,now)->prev+now);
         }
-        int cnt=0;
-        for(int val : map.values()){
-            cnt += val * (val - 1) / 2;
+
+        int cnt = 0;
+        for (int i = 0; i < M - 1; i++) {
+            for (int j = i + 1; j < M; j++) {
+                boolean same = true;
+                for (int k = 0; k < N; k++) {
+                    if (arr[i][k]!=arr[j][k]) {
+                        same = false;
+                        break;
+                    }
+                }
+                if (same) cnt++;
+            }
         }
         System.out.println(cnt);
     }
