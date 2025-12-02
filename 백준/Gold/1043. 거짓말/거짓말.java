@@ -3,69 +3,64 @@ import java.io.*;
 import java.util.*;
 public class Main {
 
-    static boolean[] answer;
-    static Deque<Integer> q = new ArrayDeque();
-    static List<List<Integer>> list = new ArrayList();  //리스트
-    static List<List<Integer>> party = new ArrayList(); //사람이 속해있는 파티 번호들
-
-    public static void main(String[] args) throws IOException{
+    static int[] parent;
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int  n = Integer.parseInt(st.nextToken());
-        int  m = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
-        answer= new boolean[m];
-        for(int i=0;i<=n;i++)party.add(new ArrayList());
+        parent = new int[N+1];
+        for(int i=0;i<=N;i++) parent[i]=i;
 
         st = new StringTokenizer(br.readLine());
-        int  t = Integer.parseInt(st.nextToken());
+        int trueCnt = Integer.parseInt(st.nextToken());
+        int[] truePeople = new int[trueCnt];
 
-        //처음 진실 아는 사람
-        if(t!=0){
-            for(int i=0;i<t;i++){
-                int num = Integer.parseInt(st.nextToken());
-                q.add(num);
+        if(trueCnt>0){
+            int tempRoot = Integer.parseInt(st.nextToken());
+            truePeople[0]=tempRoot;
+            for(int i=1;i<trueCnt;i++){
+                truePeople[i]=Integer.parseInt(st.nextToken());
+                uni(truePeople[0],truePeople[i]);
             }
         }
 
-        //입력 처리
-        for(int i=0;i<m;i++){
+        List<Integer>[] list = new ArrayList[M];
+        for(int i=0;i<M;i++){
+            list[i] = new ArrayList();
             st = new StringTokenizer(br.readLine());
-            int tempSize = Integer.parseInt(st.nextToken());
-
-            List<Integer> tempList = new ArrayList();
-            for(int j=0;j<tempSize;j++){
-                int tempNum = Integer.parseInt(st.nextToken());
-
-                party.get(tempNum).add(i);
-                tempList.add(tempNum);
-            }
-            tempList.sort(null);
-            list.add(tempList);
-        }
-
-        while(!q.isEmpty()){
-            int size = q.size();
-
-            for(int i=0;i<size;i++){
-                int num = q.poll();
-                BS(num);
+            int cnt = Integer.parseInt(st.nextToken());
+            int root = Integer.parseInt(st.nextToken());
+            list[i].add(root);
+            for(int j=1;j<cnt;j++){
+                int temp = Integer.parseInt(st.nextToken());
+                list[i].add(temp);
+                uni(root,temp);
             }
         }
 
-        int cnt=0;
-        for(int i=0;i<m;i++)if(!answer[i]) cnt++;
-        System.out.println(cnt);
+        int answer=0;
+        for(int i=0;i<M;i++){
+            boolean canLie = true;
+            if(trueCnt >0 && find(list[i].get(0)) == find(truePeople[0])) canLie = false;
+            if(canLie) answer++;
+        }
+        System.out.println(answer);
     }
-    static void BS(int num){
-        for(int row : party.get(num)){
-            if(!answer[row]) {
-                answer[row] = true;
-                for (int temp : list.get(row)) {
-                    if (temp != num) q.add(temp);
-                }
-            }
+
+    static int find(int num){
+        if(parent[num]==num) return num;
+        return parent[num]=find(parent[num]);
+    }
+    static void uni(int u,int v){
+        u = find(u);
+        v = find(v);
+
+        if(u==v) return;
+        else{
+            parent[v] = u;
         }
     }
 }
